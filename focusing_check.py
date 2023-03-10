@@ -158,14 +158,20 @@ def px_visualise(caption, grayscale_cam,image):
     #     ax[i+1].set(title=f"Embedding {i}")
     # fig.show()
 
+    all_maps = []
+    feat = text_features.cpu().numpy()
     for i in range(c):
         map = np.zeros((224,224))
-        feat = text_features[i, :].cpu().numpy()
         for j in range(n):
-            map += feat[j]*grayscale_cam[j]
-        x = map
-        x_norm = (x-np.min(x))/(np.max(x)-np.min(x))
-        map = x_norm
+            map += feat[i, j]*grayscale_cam[j]
+        all_maps.append(map)
+    all_maps = np.array(all_maps)
+
+    x_norm = (all_maps-np.min(all_maps))/(np.max(all_maps)-np.min(all_maps))
+
+    for x in range(c):
+
+        map = x_norm[x]
         print(map.max(), map.min())
         #px.imshow(raw_preprocess(raw_image))
         #print(map)
